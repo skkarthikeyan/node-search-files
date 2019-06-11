@@ -1,4 +1,4 @@
-# searchCreated an App with API for searching a word from the directory.
+# Search a word in directory and return the files containing the search word.
 Used Node.js for creating this application.
 
 How to Test manually:
