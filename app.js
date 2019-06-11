@@ -6,16 +6,16 @@ const dir_config = "src"; // example: "src/dir1"
 
 const getAllFiles = async (dir, word, filelist) => {
     if (dir[dir.length - 1] != '/') dir = dir.concat('/')
-    let files = fs.readdirSync(dir);
+    let files = fs.readdirSync(dir); // get all files
     filelist = filelist || [];
     await Promise.all(files.map(async (file) => {
-        if (fs.statSync(dir + file).isDirectory()) {
-            filelist = await getAllFiles(dir + file + '/', word, filelist);
+        if (fs.statSync(dir + file).isDirectory()) { // check for directory
+            filelist = await getAllFiles(dir + file + '/', word, filelist); // if directory call again recursively
         }
         else {
-            let result = await searchWordFromFile(dir + file, word);
-            if(result != -1){
-            filelist.push(dir + file);
+            let result = await searchWordFromFile(dir + file, word); // read and search a word in file
+            if (result != -1) { // if found
+                filelist.push(dir + file);
             }
         }
     }));
@@ -23,7 +23,7 @@ const getAllFiles = async (dir, word, filelist) => {
 };
 
 const searchWordFromFile = (file, word) => {
-    let p = new Promise ((resolve, reject)=>{
+    let p = new Promise((resolve, reject) => {
         fs.readFile(
             file,
             (err, data) => {
@@ -31,11 +31,11 @@ const searchWordFromFile = (file, word) => {
                     console.log(`Error reading file`);
                     reject(err);
                 } else {
-                    if ((data.toString().toLowerCase()).indexOf(word.toLowerCase()) != -1){
+                    if ((data.toString().toLowerCase()).indexOf(word.toLowerCase()) != -1) {
                         resolve(file);
                     }
                     else
-                    resolve(-1);
+                        resolve(-1);
                 }
             }
         );
@@ -45,29 +45,29 @@ const searchWordFromFile = (file, word) => {
 
 const searchWord = async (req, res) => {
     try {
-        if(req.query != null || req.query != undefined){
-            let fileList = await getAllFiles(dir_config, req.query);
+        if (req.query != null || req.query != undefined) {
+            let fileList = await getAllFiles(dir_config, req.query); // get files matching the search word
             res.write(JSON.stringify(fileList));
             res.end();
         }
-        else{
+        else {
             res.write("Nothing to search");
             res.end();
         }
-        
+
     }
     catch (err) {
-        res.end('error: '+ JSON.stringify(err));
+        res.end('error: ' + JSON.stringify(err));
     }
 }
 
 var server = http.createServer((request, response) => {
     response.writeHead(200, { 'Content-Type': 'text/plain' });
-    var parts = url.parse(request.url); 
-    if (parts.pathname == '/search') {
+    var parts = url.parse(request.url);
+    if (parts.pathname == '/search') { // api route
         searchWord(parts, response);
     }
-    else{
+    else {
         response.write("Invalid Url");
         response.end();
     }
@@ -77,4 +77,4 @@ server.listen(port, function () {
     console.log(`server start at port ${port}`);
 });
 
-module.exports = {getAllFiles: getAllFiles};
+module.exports = { getAllFiles: getAllFiles }; // exporting
