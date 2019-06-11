@@ -1,0 +1,16 @@
+{
+  "name": "searchword",
+  "version": "1.0.0",
+  "description": "Search a word in file directory and return file paths",
+  "main": "app.js",
+  "scripts": {
+    "start": "npm run serve",
+    "serve": "node app.js",
+    "test": "jest --watchAll"
+  },
+  "author": "Karthikeyan",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^24.8.0"
+  }
+}
